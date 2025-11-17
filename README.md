@@ -157,3 +157,107 @@ Final Answer: A new issue has been created in project PW with the summary "Make 
 
 https://python.langchain.com/docs/integrations/tools/jira/
 https://python.langchain.com/api_reference/community/utilities/langchain_community.utilities.jira.JiraAPIWrapper.html
+
+
+
+How to start server based on Docker FastAPI?
+--------------------------------------------------------
+
+You can now locally run this chatbot application for AI-JIRA.
+For that you need Ollama, Head over to https://ollama.com/download to download Ollama and pull the qwen2.5vl:7b model.
+For running locally change the POST request API url in /jira endpoint to http://localhost:11434.
+
+
+To config and run application using docker composer:
+
+go to application root from git cloned:
+
+Run "docker compose -f docker_compose.yml build" to config and build container
+Then Run "docker compose -f docker_compose.yml up" to start AI-JIRA application
+
+Open browser and open this page: http://localhost:8000/docs
+
+and click POST /jira and click "Try It Out", and insert in msg text bux yor request for send to JIRA like:
+
+"Quanti ticket sono nello stato 'AM2' e priorità 'alta'  nel progetto SUPPORT" and click Execute
+
+in Responses sectore you can see the result of you request in json format like:
+
+{
+  "issues number": 4,
+  "statistics": {
+    "tipotickets": [
+      {
+        "Tipo Ticket": "Action",
+        "size": 1
+      },
+      {
+        "Tipo Ticket": "Data Extraction Request",
+        "size": 1
+      },
+      {
+        "Tipo Ticket": "Service Request",
+        "size": 2
+      }
+    ],
+    "statotikets": [
+      {
+        "Stato": "AM2",
+        "size": 4
+      }
+    ],
+    "priorità": [
+      {
+        "Priorità": "Alta",
+        "size": 4
+      }
+    ]
+  },
+  "issues": [
+    {
+      "ID Ticket": "SUPPORT-36747",
+      "Titolo Ticket": "DATA SCADENZA 30/04/2025 - CLIENTE IMPORTANTE - 6V16 - GRUPPO IREN - Registrazione Massiva per caricamento",
+      "Tipo Ticket": "Data Extraction Request",
+      "Progetto": "Portale NPB ",
+      "Note": "",
+      "Priorità": "Alta",
+      "Stato": "AM2",
+      "Assegnatario": "",
+      "STS": ""
+    },
+    {
+      "ID Ticket": "SUPPORT-40144",
+      "Titolo Ticket": "Verifica invio mail cash welfare",
+      "Tipo Ticket": "Action",
+      "Progetto": "Portale NPB - Welfare ",
+      "Note": "",
+      "Priorità": "Alta",
+      "Stato": "AM2",
+      "Assegnatario": "",
+      "STS": ""
+    },
+    {
+      "ID Ticket": "SUPPORT-41458",
+      "Titolo Ticket": "NPB - Gestione eccezione Procedura Send_Mail_DB",
+      "Tipo Ticket": "Service Request",
+      "Progetto": "Portale NPB ",
+      "Note": "",
+      "Priorità": "Alta",
+      "Stato": "AM2",
+      "Assegnatario": "",
+      "STS": ""
+    },
+    {
+      "ID Ticket": "SUPPORT-41461",
+      "Titolo Ticket": "NPB - Verifica EJB Portale Beneficiari",
+      "Tipo Ticket": "Service Request",
+      "Progetto": "Portale NPB ",
+      "Note": "",
+      "Priorità": "Alta",
+      "Stato": "AM2",
+      "Assegnatario": "",
+      "STS": ""
+    }
+  ]
+}
+

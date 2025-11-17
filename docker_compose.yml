@@ -1,0 +1,57 @@
+name: ai-jira
+
+services:
+
+  agent:
+    image: ai-jira
+    restart: on-failure
+    pull_policy: build
+    build:
+      context: ./
+    command: ["uvicorn", "ai-jira:app", "--reload","--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - 8000:8000
+    depends_on:
+      - ollama      
+    environment:
+      - OLLAMA_MODELS="/root/.ollama"
+      - JIRA_URL="https://sadegh-beasy4biz.atlassian.net"
+      - JIRA_USERNAME="sadegh.astaneh@beasy4biz.com"
+      - JIRA_API_TOKEN="ATATT3xFfGF0XOcO8T_XvfXS3GIvkH_AKaAnwWjUAYVCvUe123Ygro0xOhkHx_hT1_KZQXQUAgaw77q8K5S3ZRXpSn8qdBFww3F4dK7NDYndi4t7UqAu8qmWx9vxoTZcwHUCnOvwX4D3qnsfFJwaWdpqYhOXT3WMQn90h2Z5BQgfzpOr4eUP_8c=B53A6888"
+      - OLLAMA_BASE_URLS=http://host.docker.internal:11434 #comma separated ollama hosts
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - .:/app
+      - ./ollama/ollama:/root/.ollama
+    networks:
+      - ollama-docker
+
+  ollama:
+    image: docker.io/ollama/ollama:latest
+    ports:
+      - 11434:11434
+    volumes:
+      - .:/app
+      - ./ollama/ollama:/root/.ollama
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: always
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_HOST=0.0.0.0
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    networks:
+      - ollama-docker
+    entrypoint:
+      [
+        "/bin/bash",
+        "-c",
+        "ollama serve & sleep 5 && ollama pull qwen2.5vl:7b && wait",
+      ]
+networks:
+  ollama-docker:
+    driver: bridge
+    external: false

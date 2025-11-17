@@ -12,22 +12,16 @@ from langchain_community.agent_toolkits.jira.toolkit import JiraToolkit
 from langchain_community.utilities.jira import JiraAPIWrapper
 from langchain_ollama import OllamaLLM
 from typing import Union
-import matplotlib.pyplot as plt
 
-
+new_api_token = "ATATT3xFfGF0XOcO8T_XvfXS3GIvkH_AKaAnwWjUAYVCvUe123Ygro0xOhkHx_hT1_KZQXQUAgaw77q8K5S3ZRXpSn8qdBFww3F4dK7NDYndi4t7UqAu8qmWx9vxoTZcwHUCnOvwX4D3qnsfFJwaWdpqYhOXT3WMQn90h2Z5BQgfzpOr4eUP_8c=B53A6888"
 JIRA_INSTANCE_URL = "https://sadegh-beasy4biz.atlassian.net"
 JIRA_URL = "https://sadegh-beasy4biz.atlassian.net"
 USERNAME = "sadegh.astaneh@beasy4biz.com"
-API_TOKEN = "ATATT3xFfGF0qOAZjnBDqHHQm-brJeQyyvDramn5hqaPjNMcrswllY38pXdAPkpv0mpNtiHmec_Ez4h97j1EcQ_20CmHNIxOhDv83RlfX4OF_2PxHj33-aHrZvWCx2xa4aT4VHvdsv1JxIoUe-xfb3_SnVqsXxtDWoGIWC-nLBEjPJXHRzcZlwA=1BFA9ED0"
+API_TOKEN = "ATATT3xFfGF0XOcO8T_XvfXS3GIvkH_AKaAnwWjUAYVCvUe123Ygro0xOhkHx_hT1_KZQXQUAgaw77q8K5S3ZRXpSn8qdBFww3F4dK7NDYndi4t7UqAu8qmWx9vxoTZcwHUCnOvwX4D3qnsfFJwaWdpqYhOXT3WMQn90h2Z5BQgfzpOr4eUP_8c=B53A6888"
 JIRA_USERNAME = "sadegh.astaneh@beasy4biz.com"
-JIRA_API_TOKEN = "ATATT3xFfGF0qOAZjnBDqHHQm-brJeQyyvDramn5hqaPjNMcrswllY38pXdAPkpv0mpNtiHmec_Ez4h97j1EcQ_20CmHNIxOhDv83RlfX4OF_2PxHj33-aHrZvWCx2xa4aT4VHvdsv1JxIoUe-xfb3_SnVqsXxtDWoGIWC-nLBEjPJXHRzcZlwA=1BFA9ED0"
+JIRA_API_TOKEN = "ATATT3xFfGF0XOcO8T_XvfXS3GIvkH_AKaAnwWjUAYVCvUe123Ygro0xOhkHx_hT1_KZQXQUAgaw77q8K5S3ZRXpSn8qdBFww3F4dK7NDYndi4t7UqAu8qmWx9vxoTZcwHUCnOvwX4D3qnsfFJwaWdpqYhOXT3WMQn90h2Z5BQgfzpOr4eUP_8c=B53A6888"
 
 from langchain_core.messages import HumanMessage
-from langchain_google_genai import (
-    ChatGoogleGenerativeAI,
-    HarmBlockThreshold,
-    HarmCategory,
-)
 
 
 from atlassian import Jira
@@ -124,14 +118,14 @@ jira = Jira(
 #board = jira.get_all_agile_boards(board_name=None, project_key=None, board_type=None, start=0, limit=50)
 #print(json.dumps(board, indent=4))
 
-
+os.environ["OLLAMA_MODELS"]="/ollama"
 os.environ["JIRA_API_TOKEN"] = API_TOKEN
 os.environ["JIRA_USERNAME"] = USERNAME
 os.environ["JIRA_INSTANCE_URL"] = JIRA_URL
 os.environ["OPENAI_API_KEY"] = "xyz"
 os.environ["JIRA_CLOUD"] = "True"
 
-llm = OllamaLLM(model="qwen2.5vl:7b")
+llm = OllamaLLM(model="qwen2.5vl:7b", base_url="http://ollama:11434")
 
 jira = JiraAPIWrapper()
 
@@ -189,6 +183,7 @@ def get_jira_issues(query, max_results=50):
         if next_page_token:
             params["nextPageToken"] = next_page_token
         response = requests.get(jira_api_url, headers=headers, params=params)
+        print("XXXX ", response, response.json())
         if response.status_code == 200:
             data = response.json()
             issues.extend(data.get("issues", []))
@@ -254,6 +249,7 @@ def getjira(msg: str):
         }
     res["issues"] = json.loads(df.to_json(orient="records"))
     return res
+
    
 if __name__ == "__main__":
-    uvicorn.run(app=app, host="0.0.0.0", port=8000)
+    uvicorn.run(app=app, host="0.0.0.0", port=8080)
